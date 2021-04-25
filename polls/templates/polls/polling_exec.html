@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заполнение опроса{% endblock %}
+
+{%block main_content%}
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<p>{{question_num}}. {{ question }}</p>
+    {% if question.image %}
+    <img src="{{ question.image.url }}" class="img-fluid">
+    {% endif %}
+    <form action="." method="post">
+    {% csrf_token %}
+         {% for c in question.choices.all %}
+             <input
+                 {% if question.q_type == 'single' %}
+                     type="radio"
+                         {% elif question.q_type == 'multiple' %}
+                             type="checkbox"
+                    {% endif %}
+                             name="choice" id="{{ c.id }}" value="{{ c.id }}">
+             <label for="{{ c.id }}">{{ c }}</label>
+             <br/>
+         {% endfor %}
+    <p><button type="submit">Next</button></p>
+    </form>
+{% endblock %}

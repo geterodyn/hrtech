@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Детали опроса{% endblock %}
+
+{% block main_content %}
+<h1>Ваш результат</h1>
+</p>Количество баллов при прохождении опроса "{{object.polling}}": {{total}}</p>
+<a href={% url "polls:list" %}>Назад к списку опросов</a>
+{% endblock %}

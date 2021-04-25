@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Результат опроса{% endblock %}
+
+{% block main_content %}
+    <h1>Результаты опроса "<b>{{ polling.name }}"</b></h1>
+    <p>{{ total }}</p>
+{% endblock %}

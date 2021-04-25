@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Список опросов{% endblock %}
+
+{% block main_content %}
+    <h1>Список доступных опросов</h1>
+    <ul>
+        {% for polling in pollings  %}
+            <li>
+                <i class="fas fa-poll-h"></i>&nbsp;<a href="{% url 'polls:detail' polling.slug %}">{{polling.name}}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,16 @@
+Question:
+  - question_text
+  - question_type
+
+Choice:
+  - question - ForeingKey(Question)
+  - choice_text
+  - score
+
+Polling:
+  - name
+  - questions - Many-to-Many(Question)
+
+Result:
+  - polling - FK(Polling)
+  - selected_choice - FK(Choice)

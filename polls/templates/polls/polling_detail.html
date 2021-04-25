@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Детали опроса{% endblock %}
+
+{% block main_content %}
+    <h1>Детали опроса "<b>{{ polling.name }}"</b></h1>
+    <ul>
+        <li><i class="far fa-calendar-alt">&nbsp;Дата публикации: {{ polling.pub_date | date:"Y-b-d H:i" }}</i></li>
+        <li><i class="far fa-clock"></i>&nbsp;Время на выполнение: 
+            {% if polling.duration %}
+            {{ polling.duration }}
+            {% else %}
+            неограничено
+            {% endif %}
+        </li>
+        <li><i class="fas fa-hashtag"></i>&nbsp;Количество вопросов: {{ polling.questions.count }}</li>
+    </ul>
+    <form action="{% url 'polls:execute' polling.slug polling.questions.first.id%}" method="GET">
+        <button>Начать опрос</button>
+    </form>
+    <p><a href="{% url 'polls:list' %}">Назад к списку опросов</a></p>
+
+{% endblock %}

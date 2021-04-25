@@ -1,0 +1,23 @@
+1. Когда у тебя отношение моделей Many-to-One (когда ссылаешься на модель через ключ ForeignKey), тогда по умолчанию множество объектов 
+(many), которое привязано (ну или ссылается) на один объект (one), Доступно через обратное имя <имя_дочернего_класса>_set
+Исправить это можно через параметр `related_name`.
+Например, есть родительский класс Question, и есть дочерний класс Choice, у которого есть поле question = models.ForeignKey(Question),
+то список объектов Choice, приязанных к объекту Question, доступно через q.choice_set.all(), где q - это экземпляр класса Question (объект Question)
+
+из документации:
+If you don’t specify a related_name attribute for a field in an abstract base class, the default reverse name will be the name of the child class followed by '_set', just as it normally would be if you’d declared the field directly on the child class. For example, in the above code, if the related_name attribute was omitted, the reverse name for the m2m field would be childa_set in the ChildA case and childb_set for the ChildB field. 
+
+Короче, этот "related_name" - это поле, под которым будет доступно другое поле у другого класса
+class Polling(models.Model):
+    owners = models.ManyToManyField(User, related_name='pollings')
+В этом примере "u.pollings.all()" - все опросники для юзера u, который является экземпляром класса User
+
+2. По поводу CBV ListView и DetailView:
+	- по умолчанию они рендерят в шаблон с именем `<model_name>_list`, и `<model_name>_detail`
+	  Например, в моем приложении это будут `polling_list.html` и `polling_detail.html`, поэтому их не обязательно указывать в настройке класса. Главное правильно назвать создаваемые шаблоны, и поместить их в правильную папку.
+	- В ListView необходимо указать queryset, и то, как объекты будут называться в шаблоне (`context_object_name`)
+	- В DetailView достаточно передать название модели `model = Polling`. По идее, еще нужно указать поле, по которому будет искаться нужный объект модели. Можно указать slug или pk (с остальными параметрами типа slug_url_kwarg, pk_url_kwarg, query_pk_and_slug надо разбираться). По умолчанию в классе, от которого мы наследуемся (class SingleObjectMixin(ContextMixin)) есть атрибут slug_field = 'slug', то есть поле модели с типом слаг должно называться 'slug'. а у меня оно так и называется, когда я создавал класс Polling в polls.models. Если бы я его обозвал, скажем, `url`, тогда в классе DetailView мне бы пришлосб прописывать атрибут slug_field = 'url'.
+
+	в шаблоне polling_list.html я указываю ссылку в тэге <a> на детали опроса <a href="{% url 'polls:detail' polling.slug %}">, где в качестве параметра передаю значение поля slug данного объекта. Таким образом, при нажатии на эту ссылку срабатывает urlpattern из polls.urls, в котором прописано path('<slug:slug>/', PollingDetail.as_view(), name='detail'). То есть в переменную 'slug' попадает значение поля slug нашего конкретного объекта, и эта переменная передается в класс PollingDetail, где ищется экземпляр класса Polling с полем slug, Значение коротого равно переданному параметру. Вроде так)
+
+	- В шаблоне экземпляр класса доступен под именем {{ object }}, либо {{ polling }} (ну то есть название класса модели), и соответственно можно обращаться ко всем её полям.
